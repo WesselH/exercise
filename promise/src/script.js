@@ -3,6 +3,7 @@
  * @param url
  * @return {Promise<any>}
  */
+
 function loadImage(url) {
   return new Promise(function(resolve, reject) {
     var img = document.createElement("img");
@@ -14,9 +15,11 @@ function loadImage(url) {
       reject(e);
     };
 
-    img.src = url;
+    img.src = url; 
   });
 }
+
+
 
 /**
  * Animate a element to a position
@@ -26,6 +29,7 @@ function loadImage(url) {
  * @param {number} y
  * @return {Promise<any>}
  */
+
 function animate(element, duration, x, y) {
   return new Promise(function(resolve) {
     TweenLite.to(element, duration, { x: x, y: y, onComplete: resolve });
@@ -61,3 +65,38 @@ var images = [
 ];
 
 /// WRITE CODE UNDER HERE
+allImagesArray = []
+
+//get all images and put them in array.
+// append images to .wrapper
+
+images.forEach(function(source){
+  var runPromise = loadImage(source);
+  allImagesArray.push(runPromise)
+  
+  runPromise.then(function(e) {
+    document.getElementsByClassName("wrapper")[0].appendChild(e);
+  });
+
+  runPromise.catch(function(e) {
+    console.log('failed');
+  });
+})
+
+//run through array and animate one by one.           :'( not working (yet)
+Promise.all(allImagesArray).then(function(image) {
+
+  allImagesArray.forEach(function(singleImage){
+    var animationPromise = animate(singleImage, 0.5, 100, 100);
+    
+    animationPromise.then(function(e) {
+      console.log('animation completed ??');
+    });
+
+    animationPromise.catch(function(e) {
+      console.log('animation failed ??');
+    });
+  })
+
+
+});
